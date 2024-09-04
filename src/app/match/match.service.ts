@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -19,9 +13,7 @@ export class MatchService {
 
   async create(user: User, createMatchDto: CreateMatchDto) {
     if (createMatchDto.homeTeamId === createMatchDto.awayTeamId) {
-      throw new BadRequestException(
-        'Home team and away team cannot be the same',
-      );
+      throw new BadRequestException('Home team and away team cannot be the same');
     }
 
     const match = await this.prisma.$transaction(async (tx) => {
@@ -94,9 +86,7 @@ export class MatchService {
     }
 
     if (match.userId !== user.id) {
-      throw new ForbiddenException(
-        `You do not have permission to access this match`,
-      );
+      throw new ForbiddenException(`You do not have permission to access this match`);
     }
 
     return match;

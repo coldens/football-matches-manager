@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -17,9 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class AuthGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     return this.validateRequest(request);
   }
