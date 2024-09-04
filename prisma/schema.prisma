@@ -18,9 +18,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email  String @unique
+  email  String  @unique
   name   String
-  apiKey String @unique
+  apiKey String  @unique
+  Match  Match[]
 }
 
 model Team {
@@ -28,7 +29,7 @@ model Team {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name String @unique
 
   matchs TeamsOnMatch[]
 }
@@ -41,8 +42,14 @@ model Match {
   homeScore Int
   awayScore Int
   date      DateTime
+  userId    Int
+
+  isFinished Boolean @default(false)
+  isStarted  Boolean @default(false)
 
   teams TeamsOnMatch[]
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model TeamsOnMatch {
@@ -51,9 +58,7 @@ model TeamsOnMatch {
 
   teamId   Int
   matchId  Int
-  score    Int
   homeTeam Boolean
-  date     DateTime
 
   team  Team  @relation(fields: [teamId], references: [id])
   match Match @relation(fields: [matchId], references: [id])
