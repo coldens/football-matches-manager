@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
-import { UseAuth } from '../guard/use-auth';
-import { UseUser } from '../guard/use-user';
+import { UseAuth } from '../auth/use-auth';
+import { UseUser } from '../auth/use-user';
 import { User } from '@prisma/client';
 
 @Controller('match')
