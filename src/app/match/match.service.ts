@@ -168,12 +168,23 @@ export class MatchService {
     });
   }
 
-  remove(user: User, id: number) {
-    return this.prisma.match.delete({
-      where: {
-        id,
-        userId: user.id,
-      },
+  async remove(user: User, id: number) {
+    const match = await this.findOne(user, id);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.teamsOnMatch.deleteMany({
+        where: {
+          matchId: match.id,
+        },
+      });
+
+      await tx.match.delete({
+        where: {
+          id: match.id,
+        },
+      });
     });
+
+    return { result: 'Match deleted' };
   }
 }
