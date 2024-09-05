@@ -61,7 +61,7 @@ export class MatchService {
         ],
       });
 
-      return tx.match.findUnique({
+      return tx.match.findUniqueOrThrow({
         where: {
           id: matchId,
         },
@@ -76,8 +76,8 @@ export class MatchService {
     return match;
   }
 
-  findAll(user: User) {
-    return this.prisma.match.findMany({
+  async findAll(user: User) {
+    const result = await this.prisma.match.findMany({
       where: {
         userId: user.id,
       },
@@ -85,6 +85,8 @@ export class MatchService {
         teams: true,
       },
     });
+
+    return result;
   }
 
   async findOne(user: User, id: number) {
@@ -122,7 +124,7 @@ export class MatchService {
     return this.prisma.$transaction(async (tx) => {
       // ======== Update teams on match ======== //
       if (updateMatchDto.homeTeamId) {
-        const homeTeam = match.teams.find((team) => team.homeTeam);
+        const homeTeam = match.teams.find((team) => team.homeTeam)!;
 
         await tx.teamsOnMatch.update({
           where: {
@@ -138,7 +140,7 @@ export class MatchService {
       }
 
       if (updateMatchDto.awayTeamId) {
-        const awayTeam = match.teams.find((team) => !team.homeTeam);
+        const awayTeam = match.teams.find((team) => !team.homeTeam)!;
 
         await tx.teamsOnMatch.update({
           where: {
