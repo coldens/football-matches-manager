@@ -12,6 +12,41 @@ The API provides the following functionalities:
 - **Retrieve All Matches**: Users can fetch a list of all scheduled or completed matches.
 - **Get Match by ID**: Users can retrieve details of a specific match using its unique identifier.
 
+## Default Teams
+
+The following default teams are included in the database:
+
+| ID  | Name            |
+| --- | --------------- |
+| 1   | Real Madrid     |
+| 2   | Barcelona       |
+| 3   | Atletico Madrid |
+| 4   | Valencia        |
+| 5   | Sevilla         |
+
+## Default User
+
+The following default user is created in the database:
+
+```json
+{
+  "id": 1,
+  "createdAt": "1725485554822",
+  "updatedAt": "1725485554822",
+  "email": "test@mail.io",
+  "name": "Test User",
+  "apiKey": "test-api-key"
+}
+```
+
+## API Key Usage
+
+To authenticate your requests, include the API key in the headers. Here’s an example using curl:
+
+```bash
+curl -X GET "http://localhost:3000/match" -H "x-api-key: test-api-key"
+```
+
 ## API Documentation
 
 For detailed API documentation, including endpoints, request/response formats, and examples, please visit the following link:
@@ -77,10 +112,6 @@ Here are some useful resources for working with NestJS:
 
 - [NestJS Documentation](https://docs.nestjs.com): Comprehensive guide and reference for the NestJS framework.
 - [Prisma Documentation](https://www.prisma.io/docs): Learn more about how to use Prisma for database management.
-
-## Contributing
-
-If you would like to contribute to this project, please feel free to open an issue or submit a pull request.
 
 ## License
 
