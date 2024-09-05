@@ -12,8 +12,24 @@ export class MatchService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(user: User, createMatchDto: CreateMatchDto) {
-    if (createMatchDto.homeTeamId === createMatchDto.awayTeamId) {
-      throw new BadRequestException('Home team and away team cannot be the same');
+    const [homeTeam, awayTeam] = await this.prisma.$transaction([
+      this.prisma.team.findUnique({
+        where: {
+          id: createMatchDto.homeTeamId,
+        },
+      }),
+      this.prisma.team.findUnique({
+        where: {
+          id: createMatchDto.awayTeamId,
+        },
+      }),
+    ]);
+
+    if (!homeTeam) {
+      throw new NotFoundException(`Team with ID ${createMatchDto.homeTeamId} not found`);
+    }
+    if (!awayTeam) {
+      throw new NotFoundException(`Team with ID ${createMatchDto.awayTeamId} not found`);
     }
 
     const match = await this.prisma.$transaction(async (tx) => {

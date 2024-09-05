@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsInt, Min, MinDate, NotEquals } from 'class-validator';
+import { IsDate, IsInt, Min, MinDate } from 'class-validator';
+import { NotEqualsTo } from '../../../validations/NotEqualsTo';
 
 export class CreateMatchDto {
   @IsInt({
@@ -16,7 +17,7 @@ export class CreateMatchDto {
   @Min(1, {
     message: 'Away team ID must be greater than 0',
   })
-  @NotEquals('homeTeamId', {
+  @NotEqualsTo('homeTeamId', {
     message: 'Home team and away team cannot be the same',
   })
   awayTeamId: number;

@@ -1,14 +1,17 @@
+import { Logger, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MatchService } from './match.service';
+import { Team, User } from '@prisma/client';
+import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+
 import { PrismaService } from '../../prisma/prisma.service';
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
-import { User } from '@prisma/client';
-import { Logger } from '@nestjs/common';
+import { MatchService } from './match.service';
 
 describe('MatchService', () => {
   let service: MatchService;
   let prisma: DeepMockProxy<PrismaService>;
   let user: User;
+  let team1: Team;
+  let team2: Team;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +34,21 @@ describe('MatchService', () => {
       apiKey: 'test-api-key',
       createdAt: new Date(),
       updatedAt: new Date(),
-    } as User;
+    };
+
+    team1 = {
+      id: 1,
+      name: 'Team 1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    team2 = {
+      id: 2,
+      name: 'Team 2',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
     Logger.overrideLogger(false);
   });
@@ -48,10 +65,12 @@ describe('MatchService', () => {
         awayTeamId: 2,
       };
 
-      prisma.$transaction.mockResolvedValue({
+      prisma.$transaction.mockResolvedValueOnce([team1, team2]); // Mock the transaction to return the teams
+
+      prisma.$transaction.mockResolvedValueOnce({
         id: 1,
         teams: [],
-      });
+      }); // Mock the transaction to return the match created
 
       const match = await service.create(user, createMatchDto);
 
@@ -61,14 +80,28 @@ describe('MatchService', () => {
       });
     });
 
-    it('should throw an error if home team and away team are the same', async () => {
+    it('should throw an error if home team is not found', async () => {
       const createMatchDto = {
         date: new Date(),
         homeTeamId: 1,
-        awayTeamId: 1,
+        awayTeamId: 2,
       };
 
-      await expect(service.create(user, createMatchDto)).rejects.toThrowError();
+      prisma.$transaction.mockResolvedValueOnce([null, team2]); // Mock the transaction to return the teams
+
+      await expect(service.create(user, createMatchDto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw an error if away team is not found', async () => {
+      const createMatchDto = {
+        date: new Date(),
+        homeTeamId: 1,
+        awayTeamId: 2,
+      };
+
+      prisma.$transaction.mockResolvedValueOnce([team1, null]); // Mock the transaction to return the teams
+
+      await expect(service.create(user, createMatchDto)).rejects.toThrow(NotFoundException);
     });
   });
 });
