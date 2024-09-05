@@ -84,4 +84,4 @@ If you would like to contribute to this project, please feel free to open an iss
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
