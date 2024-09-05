@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "qwtel.sqlite-viewer",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig"
+  ]
+}

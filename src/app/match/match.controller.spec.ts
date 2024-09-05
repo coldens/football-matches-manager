@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { mock, mockDeep } from 'jest-mock-extended';
+import { PrismaService } from '../../prisma/prisma.service';
 import { MatchController } from './match.controller';
 import { MatchService } from './match.service';
 
@@ -8,7 +10,16 @@ describe('MatchController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MatchController],
-      providers: [MatchService],
+      providers: [
+        {
+          provide: MatchService,
+          useValue: mock<MatchService>(),
+        },
+        {
+          provide: PrismaService,
+          useValue: mockDeep<PrismaService>(),
+        },
+      ],
     }).compile();
 
     controller = module.get<MatchController>(MatchController);

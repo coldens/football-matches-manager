@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsDate, IsInt, Min, MinDate, NotEquals } from 'class-validator';
 
 export class CreateMatchDto {
@@ -20,9 +21,8 @@ export class CreateMatchDto {
   })
   awayTeamId: number;
 
-  @IsDate({
-    message: 'Date must be a valid date',
-  })
   @MinDate(new Date())
+  @IsDate()
+  @Type(() => Date)
   date: Date;
 }

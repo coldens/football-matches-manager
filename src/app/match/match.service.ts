@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 
@@ -77,7 +77,11 @@ export class MatchService {
         id,
       },
       include: {
-        teams: true,
+        teams: {
+          include: {
+            team: true,
+          },
+        },
       },
     });
 
@@ -95,7 +99,11 @@ export class MatchService {
   async update(user: User, id: number, updateMatchDto: UpdateMatchDto) {
     const match = await this.findOne(user, id);
 
-    await this.prisma.$transaction(async (tx) => {
+    if (match.isFinished) {
+      throw new BadRequestException(`Match with ID ${id} is already finished`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
       // ======== Update teams on match ======== //
       if (updateMatchDto.homeTeamId) {
         const homeTeam = match.teams.find((team) => team.homeTeam);
@@ -144,11 +152,18 @@ export class MatchService {
 
       updateFields.isStarted = true;
 
-      await tx.match.update({
+      return await tx.match.update({
         where: {
           id: match.id,
         },
         data: updateFields,
+        include: {
+          teams: {
+            include: {
+              team: true,
+            },
+          },
+        },
       });
     });
   }
