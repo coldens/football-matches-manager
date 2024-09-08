@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { MatchService } from './match.service';
-import { MatchController } from './match.controller';
+import { MatchController } from './http/match.controller';
+import { CreateMatchService } from './services/create-match.service';
+import { DeleteMatchService } from './services/delete-match.service';
+import { FindMatchService } from './services/find-match.service';
+import { UpdateMatchService } from './services/update-match.service';
 
 @Module({
   controllers: [MatchController],
-  providers: [MatchService],
+  providers: [FindMatchService, CreateMatchService, UpdateMatchService, DeleteMatchService],
 })
 export class MatchModule {}

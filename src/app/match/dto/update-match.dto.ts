@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateMatchDto } from './create-match.dto';
 import { IsBoolean, IsInt, IsOptional, Min } from 'class-validator';
+import { CreateMatchDto } from './create-match.dto';
 
 export class UpdateMatchDto extends PartialType(CreateMatchDto) {
   @Min(0)

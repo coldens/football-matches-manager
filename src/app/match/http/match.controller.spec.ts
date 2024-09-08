@@ -1,9 +1,12 @@
+import { PrismaService } from '@/prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Prisma, User } from '@prisma/client';
 import { mock, mockDeep, MockProxy } from 'jest-mock-extended';
-import { PrismaService } from '../../prisma/prisma.service';
+import { CreateMatchService } from '../services/create-match.service';
+import { DeleteMatchService } from '../services/delete-match.service';
+import { FindMatchService } from '../services/find-match.service';
+import { UpdateMatchService } from '../services/update-match.service';
 import { MatchController } from './match.controller';
-import { MatchService } from './match.service';
 
 const user: User = {
   id: 1,
@@ -31,17 +34,32 @@ const match: Prisma.MatchGetPayload<{
   teams: [],
 };
 
-describe('MatchController', () => {
+describe(MatchController.name, () => {
   let controller: MatchController;
-  let matchService: MockProxy<MatchService>;
+  let findService: MockProxy<FindMatchService>;
+  let createService: MockProxy<CreateMatchService>;
+  let updateService: MockProxy<UpdateMatchService>;
+  let deleteService: MockProxy<DeleteMatchService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MatchController],
       providers: [
         {
-          provide: MatchService,
-          useValue: mock<MatchService>(),
+          provide: FindMatchService,
+          useValue: mock<FindMatchService>(),
+        },
+        {
+          provide: CreateMatchService,
+          useValue: mock<CreateMatchService>(),
+        },
+        {
+          provide: UpdateMatchService,
+          useValue: mock<UpdateMatchService>(),
+        },
+        {
+          provide: DeleteMatchService,
+          useValue: mock<DeleteMatchService>(),
         },
         {
           provide: PrismaService,
@@ -50,8 +68,11 @@ describe('MatchController', () => {
       ],
     }).compile();
 
-    controller = module.get<MatchController>(MatchController);
-    matchService = module.get(MatchService);
+    controller = module.get(MatchController);
+    findService = module.get(FindMatchService);
+    createService = module.get(CreateMatchService);
+    updateService = module.get(UpdateMatchService);
+    deleteService = module.get(DeleteMatchService);
   });
 
   it('should be defined', () => {
@@ -60,14 +81,14 @@ describe('MatchController', () => {
 
   describe('create', () => {
     it('should create a match', async () => {
-      matchService.create.mockResolvedValue(match);
+      createService.execute.mockResolvedValue(match);
       expect(await controller.create({} as any, user)).toEqual(match);
     });
   });
 
   describe('findAll', () => {
     it('should return an array of matches', async () => {
-      matchService.findAll.mockResolvedValue([match]);
+      findService.findAll.mockResolvedValue([match]);
       expect(await controller.findAll(user)).toEqual([match]);
     });
   });
@@ -75,7 +96,7 @@ describe('MatchController', () => {
   describe('findOne', () => {
     it('should return a match', async () => {
       // @ts-expect-error matchService findOne mock is not typed correctly
-      matchService.findOne.mockResolvedValue(match);
+      findService.findOne.mockResolvedValue(match);
       expect(await controller.findOne(1, user)).toEqual(match);
     });
   });
@@ -83,7 +104,7 @@ describe('MatchController', () => {
   describe('update', () => {
     it('should update a match', async () => {
       // @ts-expect-error matchService findOne mock is not typed correctly
-      matchService.update.mockResolvedValue(match);
+      updateService.execute.mockResolvedValue(match);
       expect(await controller.update(1, {} as any, user)).toEqual(match);
     });
   });
@@ -91,7 +112,7 @@ describe('MatchController', () => {
   describe('remove', () => {
     it('should remove a match', async () => {
       const removalSuccess = { result: 'success' };
-      matchService.remove.mockResolvedValue(removalSuccess);
+      deleteService.execute.mockResolvedValue(removalSuccess);
       expect(await controller.remove(1, user)).toEqual(removalSuccess);
     });
   });

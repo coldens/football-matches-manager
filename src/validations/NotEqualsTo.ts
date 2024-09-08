@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-wrapper-object-types */
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
 
 /**
  * Decorator that checks if a property is not equal to another property.
