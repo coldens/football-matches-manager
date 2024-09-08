@@ -1,6 +1,6 @@
+import { NotEqualsTo } from '@/validations/NotEqualsTo';
 import { Type } from 'class-transformer';
 import { IsDate, IsInt, Min, MinDate } from 'class-validator';
-import { NotEqualsTo } from '../../../validations/NotEqualsTo';
 
 export class CreateMatchDto {
   @IsInt({
